@@ -156,9 +156,14 @@ def main_object(context, obj, level, **kw):
         group = bpy.data.collections.get(collection_name)
         if group is None:
             group = bpy.data.collections.new(collection_name)
+            bpy.context.scene.collection.children.link(group)
         group_objects = group.objects[:]
+        
+        bpy.ops.object.select_all(action='DESELECT')
         for obj_cell in objects:
             if obj_cell not in group_objects:
+                obj_cell.select_set(True)
+                bpy.ops.collection.objects_remove()
                 group.objects.link(obj_cell)
 
     if kw_copy["use_debug_redraw"]:
