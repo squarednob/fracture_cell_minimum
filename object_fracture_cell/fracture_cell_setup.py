@@ -337,11 +337,16 @@ def cell_fracture_boolean(context, obj, objects,
             if use_interior_hide:
                 obj_cell.data.polygons.foreach_set("hide", [True] * len(obj_cell.data.polygons))
 
+            mesh_old = obj_cell.data
+            
+            # New meshes by boolean modifier are not hidden.
+            bpy.context.view_layer.objects.active = obj_cell
+            bpy.ops.object.modifier_apply(apply_as='DATA', modifier="Boolean")                       
+            
             obj_cell_eval = obj_cell.evaluated_get(depsgraph)
             mesh_new = bpy.data.meshes.new_from_object(obj_cell_eval)
-            mesh_old = obj_cell.data
+            
             obj_cell.data = mesh_new
-            obj_cell.modifiers.remove(mod)
 
             # remove if not valid
             if not mesh_old.users:
